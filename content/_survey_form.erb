@@ -1,0 +1,20 @@
+---
+filter: erb
+---
+
+
+<div class="box">
+<form action="save_email.php" method="post">
+  
+<fieldset>
+<legend>Email Registration</legend>
+
+<%= input_item(:label => "Unique Code", :type => "text", :name => "unique_code", :id=> "unique_code") %>
+<%= input_item(:label => "Email Address", :type => "text", :name => "email_address", :id=> "email_address") %>
+
+
+</fieldset>
+<script src="/javascripts/validations.js" type="text/javascript" charset="utf-8"></script>
+<input type="submit" name="Submit" value="Submit" id="Submit">
+</form>
+</div>

@@ -1,0 +1,34 @@
+
+task :default => [:build, :move_files, :eval_erb_files]
+
+desc 'deploy the site to the webserver'
+task :deploy => [:build, 'deploy:rsync']
+
+desc "moves files (like CGI files and flourish) into the output folder for easy deploy"
+task :move_files do
+  `rm -f output/cgi-bin/save_email.php` if File.exists? "output/cgi-bin/save_email.php"
+  `rm -f output/cgi-bin/inc/config.php` if File.exists? "output/cgi-bin/inc/config.php"
+  `rm -rf output/cgi-bin/inc/flourish` if File.exists? "output/cgi-bin/inc/flourish"
+
+  `cp cgi-bin/save_email.php output/cgi-bin/save_email.php`
+  `cp cgi-bin/inc/config.php output/cgi-bin/inc/config.php`
+  `cp -R cgi-bin/inc/flourish output/cgi-bin/inc/flourish`
+end
+
+
+def eval_erb_in_file_and_replace_with(file_path)
+    require 'erb'
+    filepath = Webby.site.output_dir + "/" + file_path
+
+    original_contents = File.read(filepath)
+    template = ERB.new original_contents
+
+    contents = template.result(binding)
+    File.open(filepath, 'w') do |file|
+        file << contents
+    end
+end
+
+task :eval_erb_files do
+    eval_erb_in_file_and_replace_with("cgi-bin/save_email.php")
+end
